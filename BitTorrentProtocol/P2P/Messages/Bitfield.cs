@@ -12,28 +12,11 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
   ///	The first byte of the bitfield corresponds to indices 0 - 7 from high bit to low bit,
   ///	respectively. The next one 8-15, etc. Spare bits at the end are set to zero.
 	/// </summary>
-	public class Bitfield : Message {
-		private BitArray Indexs;
-		
-		public Bitfield(BitArray Indexs) {
-			messageType = 5;
-			this.Indexs = Indexs;
-		}
-	
-		public Bitfield(byte [] BitField) {
-			messageType = 5;
-			Indexs = new BitArray(BitField);
-		}
-
-		public Bitfield(Bitfield BitField) {
-			messageType = 5;
-			Indexs = new BitArray(BitField.Indexs);
-		}
+    public class Bitfield : Message, IMessage {
 
 /* DEBUG
  * 
  * 0 0 0 13 5 255 255 255 255 255 255 255 255 255 255 255 224
- */
 		public Bitfield() {
 			message = new byte[17];
 			message[0] = 0; message[1] = 0; message[2] = 0;
@@ -44,21 +27,14 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
 			message[16] = 224;
 		}
 
-		/* ENDDEBUG 
-		 */
-		private void DoMessage() {
-			message = new byte [BigEndian.BIGENDIANBYTELENGTH + 1 + Indexs.Count];
-			StoreMessageLength(1 + Indexs.Count);
-			message[BigEndian.BIGENDIANBYTELENGTH] = messageType;
-			//Indexs.
-		}
+ ENDDEBUG  */
 
-		#region Properties
+        #region IMessage Members
 
-		public bool this [int idx ] {
-			get { return Indexs[idx]; }
-		}
+        byte[] IMessage.ToStream() {
+            throw new NotImplementedException();
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

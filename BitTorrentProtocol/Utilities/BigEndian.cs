@@ -26,7 +26,7 @@ namespace SharpTorrent.BitTorrentProtocol.Utilities {
 			byte [] buffer = new byte[BigEndian.BIGENDIANBYTELENGTH];
 			for (int i = 0; i < buffer.Length;i++)
 				buffer[i] = (byte) stream.ReadByte();
-			return IPAddress.NetworkToHostOrder(BitConverter.ToInt32(buffer, 0));
-		}		
+            return IPAddress.NetworkToHostOrder(BitConverter.ToInt32(buffer, 0));
+        }		
 	}
 }

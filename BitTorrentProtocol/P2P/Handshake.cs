@@ -1,7 +1,4 @@
 using System;
-using SharpTorrent.BitTorrentProtocol.Types;
-using SharpTorrent.BitTorrentProtocol.Cryptography;
-using SharpTorrent.BitTorrentProtocol.Utilities;
 
 namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
 	/// <summary>
@@ -29,23 +26,19 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
 	public class Handshake : Message {
 		public const int HANDSHAKEHEADSIZE = 20;
 		public const int HANDSHAKERESERVEDSIZE = 8;
-		public const int HANDSHAKESIZE = HANDSHAKEHEADSIZE + HANDSHAKERESERVEDSIZE + SHA1.SHA1SIZE + PeerID.PEERIDSIZE;
+		public const int HANDSHAKESIZE = 40; //HANDSHAKEHEADSIZE + HANDSHAKERESERVEDSIZE + SHA1.SHA1SIZE + string[20].string[20]SIZE;
 		private byte [] bitTorrentHead = new byte[HANDSHAKEHEADSIZE];
-		private PeerID id;
-		private byte [] sha1;
+		//private string[20] id;
+		//private byte [] sha1;
 
-		public Handshake(byte [] sha1, PeerID id) {
-			this.id = id;
-			this.sha1 = sha1;
-			MakeHead();
-			DoMessage();
+		public Handshake() {
 		}
 		/// <summary>
 		/// With this constructor we can obtain the incoming handshake
 		/// </summary>
 		/// <param name="buffer"></param>
 		public Handshake(byte [] buffer) {
-			int indBuffer = 0;
+		/*	int indBuffer = 0;
 			// Protocol
 			for (int indP = 0; indP < HANDSHAKEHEADSIZE; indP++) 
 				bitTorrentHead[indP] = buffer[indBuffer++];
@@ -57,18 +50,10 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
 			for (int indS = 0; indS < SHA1.SHA1SIZE; indS++)
 				sha1[indS] = buffer[indBuffer++];
 			// id
-			byte [] theId = new byte [PeerID.PEERIDSIZE];
-			for (int indId = 0; indId < PeerID.PEERIDSIZE; indId++)
+			byte [] theId = new byte [string[20].string[20]SIZE];
+			for (int indId = 0; indId < string[20].string[20]SIZE; indId++)
 				theId[indId] = buffer[indBuffer++];
-			id = new PeerID(theId);
-		}
-
-		private void MakeHead() {
-			int index = 0;
-			bitTorrentHead[index++] = 19;
-			foreach(char car in "BitTorrent protocol"){
-				bitTorrentHead[index++] = (byte) car;
-			}
+			id = new string[20](theId);*/
 		}
 
 		/// <summary>
@@ -96,48 +81,8 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
 		/// SHA1 = 40 206 133 42 117 1 226 134 51 242 184 7 149 38 143 179 188 65 146 9
 		/// ID = 456590504854484573897211065869775666969103
 		/// </summary>
-		private void DoMessage() {
-			// 19BitTorrent protocol + 8 reserved bytes + 20 bytes sha1 + 20 bytes id
-			message = new byte [HANDSHAKEHEADSIZE + HANDSHAKERESERVEDSIZE + SHA1.SHA1SIZE + PeerID.PEERIDSIZE];
-
-			bitTorrentHead.CopyTo(message, 0);
-			int index = bitTorrentHead.Length;
-
-			for(int j = 0; j < 8; j++)
-				message[index++] = 0;
-
-			foreach(byte shaElement in sha1)
-				message[index++] = shaElement;
-
-			foreach(byte idElement in id.Id)
-				message[index++] = idElement;
-		}
-
-		public bool CompareTo(Handshake handshake) {
-			// Protocol type ?
-			if (this.Protocol.CompareTo(handshake.Protocol) != 0)
-				return false;
-			// SHA1
-			for (int ind = 0; ind < SHA1.SHA1SIZE; ind++) {
-				if (sha1[ind] != handshake.Sha1[ind])
-					return false;
-			}
-			return true;
-		}
-
+		
 		#region Properties
-
-		public PeerID Id {
-			get { return id; }
-		}
-
-		public string Protocol {
-			get { return bitTorrentHead.ToString(); }
-		}
-
-		public byte [] Sha1 {
-			get { return sha1; }
-		}
 
 		#endregion
 	}

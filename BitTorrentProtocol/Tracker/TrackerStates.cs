@@ -5,7 +5,7 @@ namespace SharpTorrent.BitTorrentProtocol.Tracker {
 	/// Here goes the enumerations
 	/// </summary>
 	public class TrackerStates {
-		public enum Events {started, completed, stopped, empty};
+		
 
         public TrackerStates()
         {

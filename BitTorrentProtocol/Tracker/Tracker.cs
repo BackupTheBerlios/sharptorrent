@@ -14,12 +14,11 @@ namespace SharpTorrent.BitTorrentProtocol.Tracker {
 		}
 		public TrackerException(string message, Exception innerException) : base(message, innerException) {
 		}
-	}
-}
+    }
     
     public class Tracker {
-        public Tracker()
-        {
+        public enum TrackerEvents { started, completed, stopped, empty };
+        public Tracker() {
 
         }
     }

@@ -8,10 +8,18 @@ using System.Text;
 
 namespace SharpTorrent.BitTorrentProtocol.P2P.Messages
 {
-    public class Interested : IMessage, Message {
+    public class Interested : Message, IMessage {
         public Interested()
         {
 
         }
+
+        #region IMessage Members
+
+        byte[] IMessage.ToStream() {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }

@@ -1,71 +1,63 @@
 using System;
 using System.Collections;
-using SharpTorrent.BitTorrentProtocol.Types;
 
 namespace SharpTorrent.BitTorrentProtocol.P2P {
-	public class PeersException : Exception {
-		public PeersException() : base() {
-		}
-		public PeersException(string message) : base(message) {
-		}
-		public PeersException(string message, Exception innerException) : base(message, innerException) {
-		}
-	}
 	/// <summary>
-	/// This represents a list of Peers.
+	/// This represents a list of <c>Peer</c> elements.
 	/// </summary>
-	public class Peers {
-		private Hashtable peers = new Hashtable();
+	public class Peers : IEnumerable, IEnumerator {
+        private ArrayList peers;
+        private int index = -1;
 
-		public Peers() {
+        public Peers() : this(0) {
 		}
+        public Peers(int numElements) {
+            if (numElements == 0)
+                peers = new ArrayList();
+            else
+                peers = new ArrayList(numElements);
+        }
 
-		public void Add(string ip, PeerID id, Int32 port) {
-			Peer peer = new Peer(ip, id, port);
-			peers.Add(id.ToString(), peer);
-		}
+        #region IEnumerable Members
 
-		public void Add(Peer peer) {
-			peers.Add(peer.Id, peer);
-		}
+        IEnumerator IEnumerable.GetEnumerator() {
+            throw new NotImplementedException();
+        }
 
-		public bool ContainsKey(string key) {
-			return peers.ContainsKey(key);
-		}
+        #endregion
+        #region IEnumerator Members
+        public object Current {
+            get {
+                if ((index == -1) || (index >= peers.Count))
+                    throw new InvalidOperationException("Index out of bounds.");
+                else
+                    return peers[index];
+            }
+        }
 
-		public void Remove(PeerID key) {
-			if (peers.ContainsKey(key))
-				peers.Remove(key);
-		}
+        public bool MoveNext() {
+            index++;
+            return (index < peers.Count);
+        }
 
-		public IDictionaryEnumerator GetEnumerator() {
-			return peers.GetEnumerator();
-		}
+        public void Reset() {
+            index = -1;
+        }
 
-		#region Properties
-		
-		public Peer this[PeerID key] {
-			get { 
-				if (peers.ContainsKey(key))
-					return (Peer) peers[key];
-				else
-					throw new PeersException("The (" + key + ") doesn't exists.");
-			}
-		}
+#endregion
+        #region Properties
+        public int PeersNumber {
+            get { return peers.Count; }
+        }
 
-		/*public Peer this[Int32 index] {
-			get {
-				if (peers.Count >= index)
-					return (Peer) peers[index];
-				else
-					throw new PeersException("The (" + index.ToString() + ") element doesn't exists.");
-			}
-		}*/
-
-		public Int32 Count {
-			get { return peers.Count; }
-		}
-
-		#endregion
-	}
+        public Peer this[int index] {
+            get {
+                if ((index < 0) || (index >= peers.Count))
+                    throw new System.InvalidOperationException("Index before/after elements on container.");
+                else
+                    return (Peer)peers[index];
+            }
+        }
+        #endregion
+    }
 }

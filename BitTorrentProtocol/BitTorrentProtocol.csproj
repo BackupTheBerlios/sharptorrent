@@ -85,6 +85,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="BeEncode\BeType.cs" />
     <Compile Include="Cryptography\SHA1.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -96,12 +97,6 @@
     <Compile Include="FileIO\InputStream.cs" />
     <Compile Include="FileIO\OutputStream.cs" />
     <Compile Include="FileIO\Stream.cs" />
-    <Compile Include="InfoDictionary.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MetaInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="P2P\Connections.cs" />
     <Compile Include="P2P\Dispatcher.cs" />
     <Compile Include="P2P\Downloader.cs">
@@ -145,10 +140,6 @@
     </Compile>
     <Compile Include="P2P\Requests.cs" />
     <Compile Include="Tracker\Tracker.cs" />
-    <Compile Include="Tracker\TrackerStates.cs" />
-    <Compile Include="BeEncode\Basics.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="BeEncode\Dictionary.cs">
       <SubType>Code</SubType>
     </Compile>

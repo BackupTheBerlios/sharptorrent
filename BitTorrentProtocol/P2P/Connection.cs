@@ -6,7 +6,7 @@ using System.Text;
 
 #endregion
 
-namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
+namespace SharpTorrent.BitTorrentProtocol.P2P {
     public class Connection {
         public Connection()
         {

@@ -7,10 +7,18 @@ using System.Text;
 #endregion
 
 namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
-    public class UnChoke : IMessage, Messages.Message {
+    public class UnChoke : Message, IMessage {
         public UnChoke()
         {
 
         }
+
+        #region IMessage Members
+
+        byte[] IMessage.ToStream() {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }

@@ -27,7 +27,7 @@ namespace SharpTorrent.BitTorrentProtocol
 		/// <summary>
 		/// <b>piece length</b> maps to the number of bytes in each piece the file is split into. 
 		/// </summary>
-		private Int32 pieceLength;
+		private int pieceLength;
 		/// <summary>
 		/// <b>pieces</b> maps to a string whose length is a multiple of 20. It is to be 
 		/// subdivided into strings of length 20, each of which is the SHA1 hash of the 
@@ -41,7 +41,7 @@ namespace SharpTorrent.BitTorrentProtocol
 		/// <summary>
 		/// <b>length</b> maps to the length of the file in bytes.
 		/// </summary>
-		private Int32 length;
+		private int length;
 		/// <summary>
 		/// The multi-file case is treated as only having a single file by concatenating the 
 		/// files in the order they appear in the files list. 
