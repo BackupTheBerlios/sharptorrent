@@ -6,7 +6,7 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
 	/// The 'have' message's payload is a single number, 
 	/// the index which that downloader just completed and checked the hash of.
 	/// </summary>
-	public class Have :Message {
+	public class Have :IMessage, Message {
 		private Int32 index;
 
 		public Have(Int32 index) {

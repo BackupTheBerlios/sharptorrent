@@ -27,23 +27,19 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
 	/// 
 	/// 'choke', 'unchoke', 'interested', and 'not interested' have no payload.
 	/// </summary>
-	public abstract class Message {
+    public interface IMessage {
+        byte[] ToStream();
+    }
+
+    public abstract class Message {
 		protected byte messageType;
 		protected byte [] message;
 
 		public Message() {
 		}
 
-		public virtual byte [] ByteMessage() {
-			return message;
-		}
-
 		public new string ToString() {
 			return HexEncoding.ToString(message);
-		}
-
-		protected virtual void StoreMessageLength(int Length) {
-			BigEndian.ToBigEndian(Length, ref message, 0);
 		}
 	}
 }
