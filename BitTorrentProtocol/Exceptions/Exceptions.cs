@@ -66,4 +66,22 @@ namespace SharpTorrent.BitTorrentProtocol.Exceptions {
         public TrackerException(string message, Exception innerException) : base(message, innerException) {
         }
     }
+
+    public class SocketIOException : BitTorrentException {
+        public SocketIOException() : base() {
+        }
+        public SocketIOException(string message) : base(message) {
+        }
+        public SocketIOException(string message, Exception innerException) : base(message, innerException) {
+        }
+    }
+
+    public class SocketListenerException : BitTorrentException {
+        public SocketListenerException() : base() {
+        }
+        public SocketListenerException(string message) : base(message) {
+        }
+        public SocketListenerException(string message, Exception innerException) : base(message, innerException) {
+        }
+    }
 }

@@ -141,6 +141,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="P2P\Requests.cs" />
+    <Compile Include="P2P\Sockets\SocketIO.cs" />
+    <Compile Include="P2P\Sockets\SocketListener.cs" />
+    <Compile Include="Tracker\RequestState.cs" />
     <Compile Include="Tracker\Tracker.cs" />
     <Compile Include="BeEncode\Dictionary.cs">
       <SubType>Code</SubType>
