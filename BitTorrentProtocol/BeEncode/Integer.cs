@@ -21,7 +21,7 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
         }
     }
     public class Integer : BeType, IBeType {
-		private int theInteger;
+		private int theInteger = 0;
 
         #region Constructors
         public Integer() {
@@ -46,18 +46,15 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
         public Integer(byte[] buffer) : this(buffer, 0, 0) {
         }
         public Integer(byte[] theBuffer, int pos, int length) {
-            byte[] buffer = new byte[length];
-            for (int i = 0; i < length; i++)
-                buffer[i] = theBuffer[pos + i];
             // Check the Buffer
-            if (buffer[0] != (byte) 'i')
+            if (theBuffer[pos] != (byte) 'i')
                 throw new IntegerException("Invalid Integer buffer format.");
-            if ( (buffer[1] == (byte) '0') && (buffer[2] != (byte) 'e'))
+            if ( (theBuffer[pos + 1] == (byte) '0') && (theBuffer[pos + 2] != (byte) 'e'))
                 throw new IntegerException("Invalid Integer buffer format. The Integer starts with 0.");
             // Holds the number
             StringBuilder sb = new StringBuilder();
-            for (int i = 1; i < buffer.Length - 1; i++)
-                sb.Append((char)buffer[i]);
+            for (int i = pos + 1; i <= length; i++)
+                sb.Append((char)theBuffer[i]);
             try {
                 theInteger = Int32.Parse(sb.ToString());
             }
@@ -70,10 +67,19 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
         }
         #endregion
 
+        public override string ToString() {
+            StringBuilder sb = new StringBuilder();
+            byte[] beEncode = this.BeEncode();
+            for (int i = 0; i < beEncode.Length; i++)
+                sb.Append((char) beEncode[i]);
+            return sb.ToString();
+        }
+
         #region Properties
         public int IntegerValue {
             get { return theInteger; }
         }
+
         #endregion
 
         #region IBeType Members
@@ -90,7 +96,7 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
             string integerToStr = theInteger.ToString();
             beEncoded = new byte[integerToStr.Length+2];
             beEncoded[0] = (byte) 'i';
-            for (int i = 1; i < integerToStr.Length; i++)
+            for (int i = 1; i <= integerToStr.Length; i++)
                 beEncoded[i] = (byte) integerToStr[i-1];
             beEncoded[integerToStr.Length + 1] = (byte)'e';
             return beEncoded;

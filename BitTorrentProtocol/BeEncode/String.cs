@@ -30,15 +30,12 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
         public String(byte[] buffer) :this (buffer, 0, 0) {
         }
         public String(byte[] theBuffer, int pos, int length) {
-            byte[] buffer = new byte[length];
-            for (int i = 0; i < length; i++)
-                buffer[i] = theBuffer[pos + i];
             // Check the buffer
             StringBuilder sb = new StringBuilder();
-            int index = 0;
+            int index = pos;
             // String length
-            while ( (index < buffer.Length) && (buffer[index] != (byte) ':')) 
-                sb.Append((char) buffer[index++]);
+            while ( (index < length) && (theBuffer[index] != (byte) ':')) 
+                sb.Append((char) theBuffer[index++]);
             int stringLength = 0;
             try {
                 stringLength = Int32.Parse(sb.ToString());
@@ -49,12 +46,14 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
             catch (OverflowException oe) {
                 throw new StringException("Invalid String buffer format. " + oe.Message);
             }
+            if (index >= length)
+                throw new StringException("Invalid String buffer format.");
             // Reset the container
             sb.Length = 0;
             // Remove the :
             index++;
-            while (index < buffer.Length) {
-                sb.Append((char) buffer[index++]);
+            while (index < length) {
+                sb.Append((char) theBuffer[index++]);
             }
             // Check String length
             if (sb.Length != stringLength)
@@ -62,6 +61,16 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
             theString = sb.ToString();
         }
         #endregion
+
+        public override string ToString() {
+            StringBuilder sb = new StringBuilder();
+            byte[] beEncode = this.BeEncode();
+            for (int i = 0; i < beEncode.Length; i++)
+                sb.Append((char)beEncode[i]);
+            return sb.ToString();
+        }
+
+
         #region Properties
         public string StringValue {
             get { return theString; }
