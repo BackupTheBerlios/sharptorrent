@@ -55,10 +55,17 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
         }
         #endregion
 
+        // Return only the .net string type
         public override string ToString() {
             StringBuilder sb = new StringBuilder();
             byte[] beEncode = this.BeEncode();
-            for (int i = 0; i < beEncode.Length; i++)
+            // Remove the length
+            int actualPos = 0;
+            while (beEncode[actualPos] != (char)':')
+                actualPos++;
+            // Remove ':'
+            actualPos++;
+            for (int i = actualPos; i < beEncode.Length; i++)
                 sb.Append((char)beEncode[i]);
             return sb.ToString();
         }

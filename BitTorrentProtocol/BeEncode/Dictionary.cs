@@ -82,7 +82,7 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
             return Encoding.ASCII.GetBytes(sb.ToString());
         }
 
-#endregion
+        #endregion
 
         #region Properties
 

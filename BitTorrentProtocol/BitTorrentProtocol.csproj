@@ -157,6 +157,7 @@
     <Compile Include="Utilities\BigEndian.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Utilities\StringToByteArray.cs" />
     <Content Include="Specification\default.css" />
     <Content Include="Specification\Protocol Specification.html" />
     <AppDesigner Include="Properties\" />

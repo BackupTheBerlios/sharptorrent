@@ -5,6 +5,10 @@ using System.Collections.Generic;
 using System.Text;
 using SharpTorrent.BitTorrentProtocol;
 using SharpTorrent.BitTorrentProtocol.BeEncode;
+using SharpTorrent.BitTorrentProtocol.Tracker;
+using SharpTorrent.BitTorrentProtocol.P2P;
+using SharpTorrent.BitTorrentProtocol.Cryptography;
+using SharpTorrent.BitTorrentProtocol.Utilities;
 #endregion
 
 namespace TestUnit {
@@ -24,16 +28,22 @@ namespace TestUnit {
             Console.ReadLine();
         }
 
-        public void ReadMetainfoFile() {
+        public Dictionary ReadMetainfoFile() {
             BeParser parser = new BeParser();
             Dictionary dict = parser.Parse(@"C:\Proyectos\SharpTorrent\TestUnit\star.trek.enterprise.415.hdtv-lol.[BT].torrent");
-            Console.WriteLine(dict.ToString());
-            Console.ReadLine();
+            return dict;
+        }
+
+        public void TestTracker() {
+            Dictionary info = ReadMetainfoFile();
+            string infoHashString = info["info"].ToString();
+            byte[] infoHash = SHA1.HashValue(StringToByteArray.ConvertStringToByteArray(info["info"].ToString()));
+            Tracker tracker = new Tracker(new PeerID(), info["announce"].ToString(), infoHash, "83.40.75.65", 6881);
         }
 
         static void Main(string[] args) {
             Program test = new Program();
-            test.ReadMetainfoFile();
+            test.TestTracker();
         }
     }
 }
