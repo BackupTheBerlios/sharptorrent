@@ -5,6 +5,6 @@ namespace SharpTorrent.BitTorrentProtocol.Types {
 	/// Summary description for Basics.
 	/// </summary>
 	public interface IEncode {
-		string Encode();
+		string Encode(); 
 	}
 }
