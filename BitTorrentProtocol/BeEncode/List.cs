@@ -78,6 +78,14 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
             elements.Add(element);
         }
 
+        public override string ToString() {
+            StringBuilder sb = new StringBuilder();
+            byte[] beEncode = this.BeEncode();
+            for (int i = 0; i < beEncode.Length; i++)
+                sb.Append((char)beEncode[i]);
+            return sb.ToString();
+        }
+
         #region Properties
 
         public BeType this[int index] {

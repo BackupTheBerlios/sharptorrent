@@ -51,11 +51,19 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
         #endregion
 
         public void Add(string key, BeType element) {
-            Add(new BeEncode.String(key), element);
+            Add(key, element);
         }
 
-        public void Add(BeEncode.String key, BeType element) {
+        /*public void Add(BeEncode.String key, BeType element) {
             elements.Add(key, element);
+        }*/
+
+        public override string ToString() {
+            StringBuilder sb = new StringBuilder();
+            byte[] beEncode = this.BeEncode();
+            for (int i = 0; i < beEncode.Length; i++)
+                sb.Append((char)beEncode[i]);
+            return sb.ToString();
         }
 
         #region IBeType Members
@@ -85,5 +93,19 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
         }
 
 #endregion
+
+        #region Properties
+
+        public BeType this[string key] {
+            get {
+                if (!elements.ContainsKey(key))
+                    throw new DictionaryException("Key (" + key + ") not in Dictionary");
+                // The element is there
+                return (BeType)elements[key];
+            }
+        }
+
+        #endregion
+
     }
 }

@@ -20,15 +20,55 @@ namespace SharpTorrent.BitTorrentProtocol.P2P {
     /// <b>path</b> - A list of strings corresponding to subdirectory names, the last of which is the actual file name (a zero length list is an error case). 
     /// In the single file case, the name key is the name of a file, in the muliple file case, it's the name of a directory.
     /// </summary>
+    public class MetainfoFileException : Exception {
+		public MetainfoFileException() : base() {
+		}
+		public MetainfoFileException(string message) : base(message) {
+		}
+        public MetainfoFileException(string message, Exception innerException) : base(message, innerException) {
+        }
+    }
     public class MetainfoFile {
         private string fileName;
-        private BeEncode.String announce;
-        private BeEncode.Dictionary info;
+        private BeEncode.String announce = null;
+        private BeEncode.Dictionary info = null;
 
         public MetainfoFile(string fileName) {
             this.fileName = fileName;
         }
 
+        private void ParseFile() {
+            BeEncode.Dictionary metainfo;
+            BeParser parser = new BeParser();
+            metainfo = parser.Parse();
+            announce = (BeEncode.String) metainfo["announce"];
+            info = (BeEncode.Dictionary) metainfo["info"];
+        }
 
+        public void LoadMetainfoFile() {
+            try {
+                ParseFile();
+            }
+            catch (BeParserException bp){
+                throw new MetainfoFileException("Invalid Metainfo file (" + fileName + ") format. [" + bp.Message + "]");
+            }
+
+        }
+
+        public object InfoKey(string dictionaryKey) {
+            return info[dictionaryKey];
+        }
+
+        #region Properties
+
+        public string Announce {
+            get { return announce.StringValue; }
+        }
+
+        public BeEncode.Dictionary Info {
+            get { return info; }
+        }
+
+        #endregion
     }
 }
