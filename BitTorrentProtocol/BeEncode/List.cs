@@ -1,17 +1,9 @@
 using System;
 using System.Collections;
 using System.Text;
+using SharpTorrent.BitTorrentProtocol.Exceptions;
 
 namespace SharpTorrent.BitTorrentProtocol.BeEncode {
-	public class ListException : Exception {
-		public ListException() : base() {
-		}
-		public ListException(string message) : base(message) {
-		}
-		public ListException(string message, Exception innerException) : base(message, innerException) {
-		}
-	}
-	
 	/// <summary>
 	/// Represents a BitTorrent List.
     ///   Lists are encoded as an 'l' followed by their elements (also bencoded) 

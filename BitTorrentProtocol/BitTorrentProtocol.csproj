@@ -91,6 +91,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Debug\Debug.cs" />
+    <Compile Include="Exceptions\Exceptions.cs" />
     <Compile Include="FileIO\File.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -1,19 +1,9 @@
 using System;
 using System.Collections;
 using System.Text;
+using SharpTorrent.BitTorrentProtocol.Exceptions;
 
 namespace SharpTorrent.BitTorrentProtocol.BeEncode {
-	/// <summary>
-	/// Dictionary Exception
-	/// </summary>
-	public class DictionaryException : Exception {
-		public DictionaryException() : base() {
-		}
-		public DictionaryException(string message) : base(message) {
-		}
-		public DictionaryException(string message, Exception innerException) : base(message, innerException) {
-		}
-	}
 	/// <summary>
 	/// Represents a BitTorrent dictionarie.
     ///    Dictionaries are encoded as a 'd' followed by a list of alternating keys
@@ -51,7 +41,7 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
         #endregion
 
         public void Add(string key, BeType element) {
-            Add(key, element);
+            elements.Add(key, element);
         }
 
         /*public void Add(BeEncode.String key, BeType element) {
@@ -79,11 +69,11 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
         public byte[] BeEncode() {
             StringBuilder sb = new StringBuilder();
             sb.Append('d');
-            BeType key;
+            string key;
             BeType value;
             IEnumerator keys = elements.Keys.GetEnumerator();
             while (keys.MoveNext()) {
-                key = (BeType)keys.Current;
+                key = (string) keys.Current;
                 value = (BeType)elements[key];
                 sb.Append(key.ToString());
                 sb.Append(value.ToString());

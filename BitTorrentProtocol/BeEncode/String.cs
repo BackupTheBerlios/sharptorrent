@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using SharpTorrent.BitTorrentProtocol.Exceptions;
 
 namespace SharpTorrent.BitTorrentProtocol.BeEncode {
 	/// <summary>
@@ -7,14 +8,6 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
     /// Strings are length-prefixed base ten followed by a colon and the string. 
     /// For example 4:spam  corresponds to 'spam'.
     /// </summary>
-    public class StringException : Exception {
-		public StringException() : base() {
-		}
-		public StringException(string message) : base(message) {
-		}
-        public StringException(string message, Exception innerException) : base(message, innerException) {
-        }
-    }
     public class String : BeType, IBeType {
 		private string theString;
 
@@ -92,7 +85,7 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
             int index = 0;
             beEncoded = new byte[theString.Length + stringLength + 1];
             for (; index < stringLength; index++)
-                beEncoded[index] = (byte) stringLength.ToString()[index];
+                beEncoded[index] = (byte) theString.Length.ToString()[index];
             beEncoded[index++] = (byte)':';
             for (int i = 0; i < theString.Length; i++)
                 beEncoded[index++] = (byte) theString[i];

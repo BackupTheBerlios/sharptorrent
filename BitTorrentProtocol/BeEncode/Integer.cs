@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using SharpTorrent.BitTorrentProtocol.Exceptions;
 using SharpTorrent.BitTorrentProtocol.Utilities;
 
 namespace SharpTorrent.BitTorrentProtocol.BeEncode {
@@ -12,14 +13,6 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
     ///     a leading zero, such as i03e, are invalid, other than i0e, which of 
     ///     course corresponds to 0
     /// </summary>
-    public class IntegerException : Exception {
-		public IntegerException() : base() {
-		}
-		public IntegerException(string message) : base(message) {
-		}
-        public IntegerException(string message, Exception innerException) : base(message, innerException) {
-        }
-    }
     public class Integer : BeType, IBeType {
 		private int theInteger = 0;
 
@@ -89,7 +82,12 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
         }
 
         public void Set(string value) {
-            theInteger = Int32.Parse(value);
+            try {
+                theInteger = Int32.Parse(value);
+            }
+            catch (FormatException) {
+                throw new IntegerException("Can convert (" + value + ") to a integer string.");
+            }
         }
 
         public byte [] BeEncode() {

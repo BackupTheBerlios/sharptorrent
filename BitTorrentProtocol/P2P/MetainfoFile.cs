@@ -1,6 +1,7 @@
 ﻿#region Using directives
 using System;
 using System.IO;
+using SharpTorrent.BitTorrentProtocol.Exceptions;
 using SharpTorrent.BitTorrentProtocol.BeEncode;
 #endregion
 
@@ -71,8 +72,8 @@ namespace SharpTorrent.BitTorrentProtocol.P2P {
             try {
                 ParseFile();
             }
-            catch (BeParserException bp){
-                throw new MetainfoFileException("Invalid Metainfo file (" + fileName + ") format. [" + bp.Message + "]");
+            catch (BePaserException bpe) {
+                throw new MetainfoFileException("Invalid Metainfo file (" + fileName + ") format. [" + bpe.Message + "]");
             }
 
         }
