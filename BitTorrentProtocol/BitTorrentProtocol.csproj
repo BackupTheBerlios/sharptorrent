@@ -1,0 +1,210 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.40607</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{916F03D3-110B-4AB2-8222-E95FAF01B53F}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>BitTorrentProtocol</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SharpTorrent.BitTorrentProtocol</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Web">
+      <Name>System.Web</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Cryptography\SHA1.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FileIO\File.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FileIO\Piece.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="InfoDictionary.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MetaInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="P2P\Downloader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="P2P\MessageProcessor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="P2P\Messages\Bitfield.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="P2P\Messages\Cancel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="P2P\Messages\Handshake.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="P2P\Messages\Have.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="P2P\Messages\KeepAlive.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="P2P\Messages\Message.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="P2P\Messages\Piece.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="P2P\Messages\Request.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="P2P\Messages\StateMessages.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="P2P\Peer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="P2P\PeerCommunications.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="P2P\Peers.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="P2P\PeerStates.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tracker\Enumerations.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tracker\Request.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tracker\Response.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tracker\TrackerException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tracker\TrackerTalker.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Types\Basics.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Types\Dictionary.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Types\Integer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Types\List.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Types\PeerID.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Types\String.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utilities\BeParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utilities\BigEndian.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utilities\Comparations.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utilities\Debugging.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utilities\HexEncoding.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Content Include="Specification\default.css" />
+    <Content Include="Specification\Protocol Specification.html" />
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
