@@ -1,5 +1,6 @@
 ﻿#region Using directives
 using System;
+using System.IO;
 using SharpTorrent.BitTorrentProtocol.BeEncode;
 #endregion
 
@@ -35,14 +36,35 @@ namespace SharpTorrent.BitTorrentProtocol.P2P {
 
         public MetainfoFile(string fileName) {
             this.fileName = fileName;
+            // Check file exists
+            if (!File.Exists(this.fileName))
+                throw new MetainfoFileException("Can't find (" + this.fileName + ").");
         }
 
         private void ParseFile() {
             BeEncode.Dictionary metainfo;
             BeParser parser = new BeParser();
-            metainfo = parser.Parse();
-            announce = (BeEncode.String) metainfo["announce"];
-            info = (BeEncode.Dictionary) metainfo["info"];
+            // Load file
+            try {
+                FileStream fs = new FileStream(fileName, FileMode.Open);
+                byte[] buffer = new byte[fs.Length];
+                int readBytes = fs.Read(buffer, 0, buffer.Length);
+                if (readBytes == 0)
+                    throw new MetainfoFileException("There is no metaInfo information on file (" + fileName + ")");
+                // We have the buffer full of data, Parse it !!!!
+                metainfo = parser.Parse(buffer);
+                announce = (BeEncode.String)metainfo["announce"];
+                info = (BeEncode.Dictionary)metainfo["info"];
+            }
+            catch (NotSupportedException nse) {
+                throw new MetainfoFileException("Can't read from metaInfo file. [" + nse.Message + "]");
+            }
+            catch (IOException ioe) {
+                throw new MetainfoFileException("Input/Output error. [" + ioe.Message + "]");
+            }
+            catch (ObjectDisposedException ode) {
+                throw new MetainfoFileException("File already closed. [" + ode.Message + "]");
+            }
         }
 
         public void LoadMetainfoFile() {

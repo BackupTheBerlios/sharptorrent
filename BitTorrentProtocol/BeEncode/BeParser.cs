@@ -17,10 +17,8 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
     }
     public class BeParser {
         private int actualTokenPos = 0;
-        private int nextTokenPos = 1;
         private BeEncode.Dictionary metainfo;
-        private string metainfoText;
-
+        
         public BeParser() {
             metainfo = new BeEncode.Dictionary();
         }
@@ -29,24 +27,31 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
 
         }
 
-        private BeEncode.Integer ParseString() {
+        private BeEncode.Integer ParseInteger() {
 
         }
 
-        private BeEncode.List ParseString() {
+        private BeEncode.List ParseList() {
 
         }
 
-        private BeEncode.Dictionary ParseString() {
+        private BeEncode.Dictionary ParseDictionary() {
 
         }
 
-        public BeEncode.Dictionary Parse(string Text) {
-            metainfoText = Text;
-            // The begining is a 'd'
-            if ((char)metainfoText[actualTokenPos] != 'd')
+        public BeEncode.Dictionary Parse(byte [] buffer) {
+            // This MUST be a Dictionary
+            if ((char)buffer[actualTokenPos++] != 'd')
                 throw new BeParserException("This is not a valid dictionary.");
-            
+            // Create de Dictionary
+            metainfo = new Dictionary();
+            while (actualTokenPos < buffer.Length) {
+                
+                
+            }
+            // There must be a 'e' at the end
+            if ((char) metainfo[actualTokenPos] != 'e')
+                throw new BeParserException("This is not a valid dictionary.");
             return metainfo;
         }
     }
