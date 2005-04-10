@@ -88,6 +88,8 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
         }
 
         public byte [] BeEncode() {
+            if (theString == null)
+                throw new StringException("The string is null.");
             int stringLength = theString.Length.ToString().Length;
             int index = 0;
             beEncoded = new byte[theString.Length + stringLength + 1];

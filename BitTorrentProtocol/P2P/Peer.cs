@@ -1,7 +1,10 @@
 using System;
+using SharpTorrent.BitTorrentProtocol.Utilities;
 
 namespace SharpTorrent.BitTorrentProtocol.P2P {
-	/// <summary>
+
+    #region PeerID class
+    /// <summary>
     /// This represent the Peer ID, a random 20 bytes length.
     /// </summary>
     public class PeerID {
@@ -11,6 +14,7 @@ namespace SharpTorrent.BitTorrentProtocol.P2P {
         private byte[] peerID;
 
         #region Constructors
+
         /// <summary>
         /// Creates a new RandomID.
         /// </summary>
@@ -26,6 +30,7 @@ namespace SharpTorrent.BitTorrentProtocol.P2P {
                 /// TODO: Generar random byte
                 peerID[index] = (byte)'A'; 
         }
+        
         /// <summary>
         /// Create a PeerID from another Peer.
         /// </summary>
@@ -35,17 +40,37 @@ namespace SharpTorrent.BitTorrentProtocol.P2P {
             // Copy Id
             this.peerID = (byte[])peerID.peerID.Clone();
         }
+
         #endregion
+
+        #region Public Methods
+
+        public override string ToString() {
+            // Return the (20 byte) ID as a string
+            return Conversions.ConvertByteArrayToString(peerID);
+        }
+
+        #endregion
+
         #region Properties
+
         public byte[] ID {
             get { return this.peerID; }
         }
+        
         #endregion
+
     }
+    
+    #endregion
+
     /// <summary>
     /// Those are the peer Status.
     /// </summary>
     public enum PeerStatus { psInitializing, psContacted, psWorking, psDisconnected };
+
+    #region Peer class
+
     /// <summary>
     /// <b>peerID</b>, random 20 length as a string.
     /// <b>peerIP</b>, address or dns name as a string. 
@@ -88,4 +113,6 @@ namespace SharpTorrent.BitTorrentProtocol.P2P {
         }
         #endregion
     }
+
+    #endregion
 }

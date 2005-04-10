@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using SharpTorrent.BitTorrentProtocol.BeEncode;
+using SharpTorrent.BitTorrentProtocol.Exceptions;
 
 namespace SharpTorrent.BitTorrentProtocol.P2P {
 	/// <summary>
@@ -9,14 +11,31 @@ namespace SharpTorrent.BitTorrentProtocol.P2P {
         private ArrayList peers;
         private int index = -1;
 
+        # region Constructors
+
         public Peers() : this(0) {
 		}
+        
         public Peers(int numElements) {
             if (numElements == 0)
                 peers = new ArrayList();
             else
                 peers = new ArrayList(numElements);
         }
+
+        public Peers(BeEncode.Dictionary peers) {
+            try {
+                // Create the peers from the dictionary.
+
+            }
+            catch (DictionaryException de) {
+                /// TODO log error
+                
+                this.peers = new ArrayList();
+            }
+        }
+
+        #endregion
 
         #region IEnumerable Members
 

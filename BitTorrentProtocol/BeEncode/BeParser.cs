@@ -93,6 +93,7 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
             Dictionary pDictionary = new Dictionary();
             string dictionaryKey;
             BeType dictionaryElement;
+            int infoBegining = 0;
 
             if ((buffer[actualTokenPos] != (char)'d') || (buffer[actualTokenPos + 1] == (char)'e'))
                 throw new BePaserException("There is not a valid Dictionary at position " + actualTokenPos.ToString());
@@ -101,6 +102,10 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
             while (buffer[actualTokenPos] != (char)'e') {
                 // First the dictionary key
                 dictionaryKey = ParseString(buffer).StringValue;
+                // The info Key has an special treat
+                if (dictionaryKey.CompareTo("info") == 0) {
+                   infoBegining = actualTokenPos;
+                }
                 // Now the dictionary element
                 switch (buffer[actualTokenPos]) {
                     case (byte)'d': dictionaryElement = ParseDictionary(buffer);
@@ -114,6 +119,13 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
                 }
                 // We have the KEY and the ELEMENT
                 pDictionary.Add(dictionaryKey, dictionaryElement);
+                if (dictionaryKey.CompareTo("info") == 0) {
+                    int end = actualTokenPos;
+                    byte[] temp = new byte[end - infoBegining];
+                    for (int i = 0; i < end - infoBegining; i++)
+                        temp[i] = buffer[infoBegining + i];
+                    pDictionary.Add("infoToHash", temp);
+                }
             }
             // Remove the 'e'
             actualTokenPos++;

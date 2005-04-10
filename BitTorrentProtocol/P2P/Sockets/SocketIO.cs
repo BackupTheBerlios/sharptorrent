@@ -12,7 +12,7 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Sockets {
     public delegate void CloseHandler(SocketIO socket);
     public delegate void ErrorHandler(SocketIO socket, Exception error);
     /// <summary>
-    /// This class supports all Asynchronous sockets.
+    /// This class supports Asynchronous socket communications.
     /// </summary>
     public class SocketIO {
         /// <summary>
@@ -21,6 +21,7 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Sockets {
         private const int TCPCLIENTBUFFERSIZE = 524288;
         private NetworkStream ns;
         private TcpClient tcpClient;
+        private Socket clientSocket;
         private MessageHandler messageHandler;
         private CloseHandler closeHandler;
         private ErrorHandler errorHandler;
@@ -29,27 +30,30 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Sockets {
         private int port;
         private byte[] receiveBuffer;
         private int bufferSize;
-        private int listerIndex;
-
+        
         #region Construtor and Destructor
 
         public SocketIO(int bufferSize, MessageHandler mh, CloseHandler ch, ErrorHandler eh) {
             ns = null;
             tcpClient = null;
+            clientSocket = null;
             messageHandler = mh;
             closeHandler = ch;
             errorHandler = eh;
             disposed = false;
             this.bufferSize = bufferSize;
             receiveBuffer = new Byte[this.bufferSize];
-            listerIndex = -1;
         }
 
-        /*public SocketIO(int bufferSize, MessageHandler mh, CloseHandler ch, ErrorHandler eh, SocketIO socket, int listenerIndex) {
-            
-        }*/
+        public SocketIO(Socket client, int bufferSize, MessageHandler mh, CloseHandler ch, ErrorHandler eh, string ip, int port) :this(bufferSize, mh, ch, eh) {
+            this.ip = ip;
+            this.port = port;
+            clientSocket = client;
+            ns = tcpClient.GetStream();
+            Receive();
+        }
 
-        public ~SocketIO() {
+        ~SocketIO() {
             if (!disposed)
                 Dispose();
         }
@@ -58,13 +62,13 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Sockets {
 
         #region Private Methods
 
-        private Boolean IsAListenerCreatedSocket() {
-            return (listerIndex >= 0);
-        }
-
         private void Dispose() {
             disposed = true;
             Disconnect();
+            
+            messageHandler = null;
+            errorHandler = null;
+            closeHandler = null;
         }
 
         private void Receive() {
@@ -86,9 +90,9 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Sockets {
                 Receive();
             }
             else {
-                throw new SocketIOException("Connection closed.");
                 closeHandler(this);
                 Dispose();
+                throw new SocketIOException("Connection closed.");
             }
         }
 
@@ -127,8 +131,11 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Sockets {
                 ns.Close();
             if (tcpClient != null)
                 tcpClient.Close();
+            if (clientSocket != null)
+                clientSocket.Close();
             ns = null;
             tcpClient = null;
+            clientSocket = null;
         }
 
         public void Send(byte[] buffer) {

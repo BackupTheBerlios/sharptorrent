@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using System.Collections;
 using System.Text;
 using SharpTorrent.BitTorrentProtocol.Exceptions;
+
 
 namespace SharpTorrent.BitTorrentProtocol.BeEncode {
 	/// <summary>
@@ -29,18 +31,37 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
         }
 
         public Dictionary(BeEncode.Dictionary dictionary) {
-            
+            this.elements = (Hashtable)dictionary.elements.Clone();
         }
 
         public Dictionary(byte[] buffer) : this(buffer, 0,0) {
+            // Call another Constructor
         }
 
         public Dictionary(byte[] buffer, int pos, int length) {
-
+            BeParser parser = new BeParser();
+            try {
+                Dictionary tempDictionary = parser.Parse(buffer);
+                // Copy all the elements to this Dictionary
+                this.elements = (Hashtable)tempDictionary.elements.Clone();
+                // Free memory
+                tempDictionary = null;
+            }
+            catch (BePaserException bpe) {
+                /// TODO log error
+                throw new DictionaryException("Error parsing the buffer.", bpe);
+            }
         }
+
         #endregion
 
+        #region Public methods
+
         public void Add(string key, BeType element) {
+            elements.Add(key, element);
+        }
+
+        public void Add(string key, byte[] element) {
             elements.Add(key, element);
         }
 
@@ -56,6 +77,19 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
             return sb.ToString();
         }
 
+        public bool ContainsKey(string key) {
+            return (elements.ContainsKey(key));
+        }
+
+        public byte[] SpecialValue(string key) {
+            if (ContainsKey(key))
+                return (byte []) elements[key];
+            else
+                throw new DictionaryException("Key (" + key + ") not in Dictionary");
+        }
+
+        #endregion
+
         #region IBeType Members
 
         public void Set(int value) {
@@ -67,19 +101,28 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
         }
 
         public byte[] BeEncode() {
-            StringBuilder sb = new StringBuilder();
-            sb.Append('d');
+            MemoryStream mem = new MemoryStream();
+            StreamWriter sw = new StreamWriter(mem);
+            sw.Write((byte)'d');
             string key;
             BeType value;
+            byte[] beencodedKey;
+            byte[] beencodedValue;
             IEnumerator keys = elements.Keys.GetEnumerator();
             while (keys.MoveNext()) {
                 key = (string) keys.Current;
+                beencodedKey = ((IBeType)(new String(key))).BeEncode();
+                for (int i = 0; i < beencodedKey.Length; i++)
+                    sw.Write(beencodedKey[i]);
                 value = (BeType)elements[key];
-                sb.Append(key.ToString());
-                sb.Append(value.ToString());
+                beencodedValue = ((IBeType)value).BeEncode();
+                for (int i = 0; i < beencodedValue.Length; i++)
+                    sw.Write((byte) beencodedValue[i]);
             }
-            sb.Append('e');
-            return Encoding.ASCII.GetBytes(sb.ToString());
+            sw.Write((byte)'e');
+            //return Encoding.ASCII.GetBytes(sb.ToString());
+            sw.Close();
+            return mem.GetBuffer();
         }
 
         #endregion

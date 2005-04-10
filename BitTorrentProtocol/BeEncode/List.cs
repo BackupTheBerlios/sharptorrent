@@ -106,7 +106,10 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
             sb.Append('l');
             // A Integer, a String, a List or a Dictionary
             foreach (BeType element in elements) {
-                sb.Append(element.ToString());
+                // get the BeEncoded form
+                byte[] beEncodedForm = ((IBeType)element).BeEncode();
+                for (int i = 0; i < beEncodedForm.Length; i++)
+                    sb.Append((char)beEncodedForm[i]);
             }
             sb.Append('e');
             // String to byte Array

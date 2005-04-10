@@ -9,6 +9,8 @@ using System.IO;
 using SharpTorrent.BitTorrentProtocol.Exceptions;
 using SharpTorrent.BitTorrentProtocol.BeEncode;
 using SharpTorrent.BitTorrentProtocol.P2P;
+using SharpTorrent.BitTorrentProtocol.Utilities;
+using SharpTorrent.BitTorrentProtocol.Cryptography;
 #endregion
 
 namespace SharpTorrent.BitTorrentProtocol.Tracker {
@@ -67,13 +69,13 @@ namespace SharpTorrent.BitTorrentProtocol.Tracker {
     /// </summary>
     public enum TrackerEvents { started, completed, stopped, empty };
     public delegate void NewPeersEventHandler(Tracker tracker);
-    public static ManualResetEvent allDone= new ManualResetEvent(false);
+    public delegate void NewTrackerResponse();
     public class Tracker {
         private string urlTracker;
         /// <summary>
         /// TimeOut for the request in milliseconds
         /// </summary>
-        private int requestTimeOut = 30000;
+        private int requestTimeOut = 1 * 60 * 1000;     // 1 minute
         private Dictionary response;
         private byte[] infoHash;
         private PeerID peerID;
@@ -84,14 +86,21 @@ namespace SharpTorrent.BitTorrentProtocol.Tracker {
         private double left;
         private TrackerEvents status;
         private int requestInterval;
-        private bool hasTrackerResponse;
         private string trackerGetRequest;
         private byte [] trackerResponse;
+        private Timer timer;
         private RequestState requestState;
+        private bool trackerFailure;
+        private string trackerFailureReason;
+        /// <summary>
+        /// Static properties
+        /// </summary>
+        public static ManualResetEvent allDone = new ManualResetEvent(false);
         /// <summary>
         /// Events
         /// </summary>
         public event NewPeersEventHandler onNewPeers;
+        public event NewTrackerResponse onNewTrackerResponse;
 
         #region Constructors
 
@@ -105,12 +114,22 @@ namespace SharpTorrent.BitTorrentProtocol.Tracker {
             uploaded = downloaded = left = 0;
             status = TrackerEvents.empty;
             requestInterval = 0;
-            hasTrackerResponse = false;
+            trackerResponse = null;
+            timer = null;
         }
+
+        /// <summary>
+        /// Create the Tracker class.
+        /// </summary>
+        /// <param name="peerID"></param>
+        /// <param name="urlTracker"></param>
+        /// <param name="infoHash">This is the Bencoded info value.</param>
+        /// <param name="ip"></param>
+        /// <param name="port"></param>
         public Tracker(PeerID peerID, string urlTracker, byte [] infoHash, string ip, int port) : this() {
             this.peerID = peerID;
             this.urlTracker = urlTracker;
-            this.infoHash = infoHash;
+            this.infoHash = SHA1.HashValue(infoHash);
             this.ip = ip;
             this.port = port;
         }
@@ -118,8 +137,7 @@ namespace SharpTorrent.BitTorrentProtocol.Tracker {
         #endregion
 
         #region Example 
-	    /// %28%CE%85*u%01%E2%863%F2%B8%07%95%26%8F%B3%BCA%92%09
-		///		This is a real example. (extracted from the Tracker log)
+        ///		This is a real example. (extracted from the Tracker log)
 		///		"GET /announce?info_hash=%28%CE%85*u%01%E2%863%F2%B8%07%95%26%8F%B3%BCA%92%09
 		///	  &peer_id=-AZ2042-R%40%EB%F4%A2H%A4%2Bx%01%A2c
 		///	  &port=6882
@@ -131,12 +149,14 @@ namespace SharpTorrent.BitTorrentProtocol.Tracker {
 		///	  &ip=80.24.89.36
         #endregion
 
+        #region Private methods
+
         private void PrepareTrackerRequest() {
             // Prepare the Get string
             StringBuilder sb = new StringBuilder();
             sb.Append(urlTracker + "?");
-            sb.Append("info_hash=" + infoHash.ToString());
-            sb.Append("&peer_id=" + peerID.ToString());
+            sb.Append("info_hash=" + Conversions.EscapeString(infoHash));
+            sb.Append("&peer_id=" + Conversions.EscapeString(peerID.ID));
             sb.Append("&port=" + port.ToString());
             sb.Append("&uploaded=" + uploaded.ToString());
             sb.Append("&downloaded=" + downloaded.ToString());
@@ -145,7 +165,7 @@ namespace SharpTorrent.BitTorrentProtocol.Tracker {
             sb.Append("&num_peers=0");
             sb.Append("&ip=" + ip.ToString());
             // Escape the String
-            trackerGetRequest = HttpUtility.HtmlEncode(sb.ToString());
+            trackerGetRequest = sb.ToString(); //HttpUtility.HtmlEncode(sb.ToString());
         }
     
         /// <summary>
@@ -153,42 +173,64 @@ namespace SharpTorrent.BitTorrentProtocol.Tracker {
         /// </summary>
         private void SendTrackerGet() {
             PrepareTrackerRequest();
-            HttpWebRequest request;
-            request = (HttpWebRequest) WebRequest.Create(trackerGetRequest);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(trackerGetRequest);
             requestState = new RequestState();
             // To store the request
-            requestState = request;
-            // Start the Async request
-            IAsyncResult result = request.BeginGetResponse(new AsyncCallback(EndGetResponse), requestState);
+            requestState.request = request;
+            try {
+                // Start the Async request
+                IAsyncResult result = request.BeginGetResponse(new AsyncCallback(EndGetTrackerResponse), requestState);
 
-            // We need a TimeOut
-            ThreadPool.RegisterWaitForSingleObject(result.AsyncWaitHandle, new WaitOrTimerCallback(TrackerGetTimeOut), requestState, requestTimeOut, true);
-            
+                // We need a TimeOut
+                ThreadPool.RegisterWaitForSingleObject(result.AsyncWaitHandle, new WaitOrTimerCallback(TrackerGetTimeOut), requestState, requestTimeOut, true);
 
-            // Get the response
-            response = request.GetResponse();
-            Stream receiveStream = response.GetResponseStream();
-			Encoding encode = System.Text.Encoding.GetEncoding("utf-8");
-			StreamReader sr = new StreamReader(receiveStream, encode);
-			// Tracker response must have less than 256 bytes.
-            char [] bufferRead = new char [256];
-			int responseLength = sr.Read(bufferRead, 0, 256);
-			trackerResponse = new byte [responseLength];
-			for (int i = 0; i < responseLength; i++) {
-                trackerResponse[i] = (byte)bufferRead[i];
+                // Signal the manual event to wait.
+                allDone.WaitOne();
+                requestState.response.Close();
+                trackerResponse = null;
+                trackerFailure = false;
+                trackerFailureReason = string.Empty;
+            }
+            catch(WebException we) {
+                throw new TrackerException("Error in GET to tracker. [" + we.Message + "].", we);
             }
         }
 
-        private void EndGetResponse(IAsyncResult result) {
+        private void EndGetTrackerResponse(IAsyncResult result) {
+            requestState = (RequestState) result.AsyncState;
+            try {
+                WebRequest webRequest = requestState.request;
+                requestState.response = webRequest.EndGetResponse(result);
 
+                // Get the response
+                requestState.streamResponse = requestState.response.GetResponseStream();
+
+                Encoding encode = System.Text.Encoding.GetEncoding("utf-8");
+                StreamReader sr = new StreamReader(requestState.streamResponse, encode);
+                // Tracker response must have less than 256 bytes.
+                char[] bufferRead = new char[512];
+                int responseLength = sr.Read(bufferRead, 0, 512);
+                trackerResponse = new byte[responseLength];
+                for (int i = 0; i < responseLength; i++) {
+                    trackerResponse[i] = (byte)bufferRead[i];
+                }
+                ProcessTrackerResponse();
+            }
+            catch (WebException we) {
+                //throw new TrackerException("Error getting response from tracker. [" + we.Message + "].", we);
+            }
+            allDone.Set();
         }
 
         private void TrackerGetTimeOut(object state, bool timedOut) {
             if (timedOut) {
                 // Abort the Get
-                HttpWebRequest request = (state as RequestState).request;
+                WebRequest request = (state as RequestState).request;
                 if (request != null)
                     request.Abort();
+                // To create the timer
+                requestInterval = 2 * 60 * 1000;
+                ProcessTrackerResponse();
             }
         }
 
@@ -197,9 +239,51 @@ namespace SharpTorrent.BitTorrentProtocol.Tracker {
                 onNewPeers(this);
         }
 
+        private void ProcessTrackerResponse() {
+            // The tracker response is a Dictionary
+            if (trackerResponse != null) {
+                // Create the dictionary
+                try {
+                    response = new Dictionary(trackerResponse);
+                    // Is there a failure reason ??
+                    if (response.ContainsKey("failure reason")) {
+                        trackerFailure = true;
+                        trackerFailureReason = response["failure reason"].ToString();
+                    }
+                    else {      // We have data from the Tracker
+                        // Get the interval
+                        requestInterval = ((BeEncode.Integer)response["interval"]).IntegerValue;
+                    }
+                }
+                catch (DictionaryException de) {
+                    /// TODO (log error)
+                    ;
+                }
+                catch (IntegerException ie) {
+                    /// TODO (log error)
+                    ;
+                }
+                // We have a new Tracker response, notify!!!
+                if (onNewTrackerResponse != null)
+                    onNewTrackerResponse();
+            }
+            // Progam the timer to future requests even if not yet completed. Only once
+            //if (timer == null)
+            //    timer = new Timer(new TimerCallback(TimeToNewRequest), null, requestInterval, requestInterval);
+        }
+
+        private void TimeToNewRequest(object state) {
+            // Send a new Request
+            SendTrackerGet();
+        }
+
+        #endregion
+
+        #region Public methods
+
         public Peers GetPeers() {
-            if (hasTrackerResponse) {
-                return null;
+            if (trackerResponse != null) {
+                return new Peers((BeEncode.Dictionary) response["peers"]);
             }
             else
                 throw new TrackerException("There is not a refreshed Peer list.");
@@ -208,14 +292,19 @@ namespace SharpTorrent.BitTorrentProtocol.Tracker {
         public void StartTrackerRequests() {
             // Start the Tracker requests
             status = TrackerEvents.started;
-
+            SendTrackerGet();
         }
 
         public void StopTrackerRequests() {
             // Stop the Tracker requests
             status = TrackerEvents.stopped;
-
+            // Stop the timer
+            timer.Dispose();
+            timer = null;
         }
+
+        #endregion
+
         #region Properties
 
         public double Downloaded {
@@ -238,6 +327,24 @@ namespace SharpTorrent.BitTorrentProtocol.Tracker {
             set { requestTimeOut = value; }
 
         }
+
+        public int RequestInterval {
+            get { return requestInterval; }
+        }
+
+        public bool RequestFailure {
+            get { return trackerFailure; }
+        }
+
+        public string RequestFailureReason {
+            get { return trackerFailureReason; }
+        }
+
+        public byte[] Sha1InfoHash {
+            get { return infoHash; }
+            set { infoHash = value; }
+        }
+
         #endregion
     }
 }
