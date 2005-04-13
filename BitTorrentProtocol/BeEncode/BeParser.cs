@@ -74,7 +74,7 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
             // In the List we can found a Integer, a String, a List or a Dictionary.
             while (buffer[actualTokenPos] != (char)'e') {
                 switch (buffer[actualTokenPos]) {
-                    case (byte) 'd': pList.Add(ParseString(buffer));
+                    case (byte) 'd': pList.Add(ParseDictionary(buffer));
                         break;
                     case (byte)'l': pList.Add(ParseList(buffer));
                         break;
@@ -137,8 +137,8 @@ namespace SharpTorrent.BitTorrentProtocol.BeEncode {
             if ((char)buffer[actualTokenPos] != 'd')
                 throw new BePaserException("This is not a valid dictionary.");
             // Create de Dictionary
-            Dictionary metainfo = ParseDictionary(buffer);
-            return metainfo;
+            Dictionary parsedDictionary = ParseDictionary(buffer);
+            return parsedDictionary;
         }
 
         public BeEncode.Dictionary Parse(string fileName) {

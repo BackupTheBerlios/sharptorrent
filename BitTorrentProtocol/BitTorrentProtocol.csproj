@@ -99,6 +99,7 @@
     <Compile Include="FileIO\InputStream.cs" />
     <Compile Include="FileIO\OutputStream.cs" />
     <Compile Include="FileIO\Stream.cs" />
+    <Compile Include="Log\Log.cs" />
     <Compile Include="P2P\Connections.cs" />
     <Compile Include="P2P\Dispatcher.cs" />
     <Compile Include="P2P\Downloader.cs">

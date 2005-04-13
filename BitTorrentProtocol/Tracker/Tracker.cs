@@ -217,7 +217,7 @@ namespace SharpTorrent.BitTorrentProtocol.Tracker {
                 ProcessTrackerResponse();
             }
             catch (WebException we) {
-                //throw new TrackerException("Error getting response from tracker. [" + we.Message + "].", we);
+                throw new TrackerException("Error getting response from tracker. [" + we.Message + "].", we);
             }
             allDone.Set();
         }
@@ -244,6 +244,7 @@ namespace SharpTorrent.BitTorrentProtocol.Tracker {
             if (trackerResponse != null) {
                 // Create the dictionary
                 try {
+                    Console.WriteLine(Conversions.ConvertByteArrayToString(trackerResponse));
                     response = new Dictionary(trackerResponse);
                     // Is there a failure reason ??
                     if (response.ContainsKey("failure reason")) {
