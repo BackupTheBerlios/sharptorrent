@@ -1,23 +1,23 @@
 ﻿#region Using directives
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
+using SharpTorrent.BitTorrentProtocol.Utilities;
 #endregion
 
 namespace SharpTorrent.BitTorrentProtocol.P2P.Messages
 {
     public class Interested : Message, IMessage {
-        public Interested()
-        {
-
+        
+        public Interested() {
+            this.type = 2;
         }
 
         #region IMessage Members
 
         byte[] IMessage.ToStream() {
-            throw new NotImplementedException();
+            message = base.ToStream();
+            message[4] = type;
+            return message;
         }
 
         #endregion

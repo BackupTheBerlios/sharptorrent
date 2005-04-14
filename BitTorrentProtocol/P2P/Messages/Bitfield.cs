@@ -14,20 +14,8 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
 	/// </summary>
     public class Bitfield : Message, IMessage {
 
-/* DEBUG
- * 
- * 0 0 0 13 5 255 255 255 255 255 255 255 255 255 255 255 224
-		public Bitfield() {
-			message = new byte[17];
-			message[0] = 0; message[1] = 0; message[2] = 0;
-			message[3] = 13;
-			message[4] = 5;
-			for (int ind = 5; ind < 16; ind++)
-				message[ind] = 255;
-			message[16] = 224;
-		}
+        /* 0 0 0 13 5 255 255 255 255 255 255 255 255 255 255 255 224 */
 
- ENDDEBUG  */
 
         #region IMessage Members
 

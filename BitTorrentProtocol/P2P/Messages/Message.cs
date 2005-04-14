@@ -39,7 +39,12 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
 		}
 
 		public new string ToString() {
-            return ""; // HexEncoding.ToString(message);
+            return Conversions.HexByteArrayToString(message);
         }
-	}
+
+        protected byte [] ToStream() {
+            // The basic types are 5 bytes length
+            return new byte[BigEndian.BIGENDIANBYTELENGTH + 1];
+        }
+    }
 }

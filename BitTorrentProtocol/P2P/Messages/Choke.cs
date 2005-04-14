@@ -6,15 +6,17 @@ using System;
 
 namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
     public class Choke : Message, IMessage {
-        public Choke()
-        {
-
+        
+        public Choke() {
+            this.type = 0;
         }
 
         #region IMessage Members
 
         byte[] IMessage.ToStream() {
-            throw new NotImplementedException();
+            base.ToStream();
+            message[4] = type;
+            return message;
         }
 
         #endregion

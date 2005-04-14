@@ -1,15 +1,19 @@
 ﻿#region Using directives
 using System;
+using System.Diagnostics;
 #endregion
 
 namespace SharpTorrent.BitTorrentProtocol.Exceptions {
     
     public class BitTorrentException : ApplicationException {
         public BitTorrentException() : base() {
+            Trace.WriteLine("Exception generated - type (" + this.ToString() + ") - message (" + this.Message +")");
         }
         public BitTorrentException(string message) : base(message) {
+            Trace.WriteLine("Exception generated - type (" + this.ToString() + ") - message (" + message + ")");
         }
         public BitTorrentException(string message, Exception innerException) : base(message, innerException) {
+            Trace.WriteLine("Exception generated - type (" + this.ToString() + ") - message (" + message + ")");
         }
     }
 

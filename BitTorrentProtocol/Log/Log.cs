@@ -61,6 +61,10 @@ namespace SharpTorrent.BitTorrentProtocol.Log {
             sw.Flush();
         }
 
+        public void WriteException(string exceptionType) {
+            WriteLine(exceptionType, LogType.Exception);
+        }
+
         #endregion
 
         #region TraceListener stub

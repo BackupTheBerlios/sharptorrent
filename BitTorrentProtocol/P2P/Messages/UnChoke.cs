@@ -8,15 +8,17 @@ using System.Text;
 
 namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
     public class UnChoke : Message, IMessage {
-        public UnChoke()
-        {
-
+        
+        public UnChoke() {
+            this.type = 1;
         }
 
         #region IMessage Members
 
         byte[] IMessage.ToStream() {
-            throw new NotImplementedException();
+            base.ToStream();
+            message[4] = type;
+            return message;
         }
 
         #endregion

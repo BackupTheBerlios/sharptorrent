@@ -12,13 +12,17 @@ namespace SharpTorrent.BitTorrentProtocol.Utilities {
 		public BigEndian() {
 		}
 
-		public static void ToBigEndian(int Integer, ref byte [] Buffer, int InitialPos) {
-			byte [] converted = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(Integer));
+		public static void ToBigEndian(int integerValue, ref byte [] buffer, int initialPosition) {
+			byte [] converted = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(integerValue));
 			for (int i = 0; i < converted.Length; i++)
-				Buffer[InitialPos + i] = converted[i];
+				buffer[initialPosition + i] = converted[i];
 		}
 
-		public static int FromBigEndian(byte [] Buffer, int InitialPos) {
+        public static byte [] ToBigEndian(int integerValue) {
+            return BitConverter.GetBytes(IPAddress.HostToNetworkOrder(integerValue));
+        }
+
+        /*public static int FromBigEndian(byte [] Buffer, int InitialPos) {
 			return IPAddress.NetworkToHostOrder(BitConverter.ToInt32(Buffer, InitialPos));
 		}
 
@@ -27,6 +31,6 @@ namespace SharpTorrent.BitTorrentProtocol.Utilities {
 			for (int i = 0; i < buffer.Length;i++)
 				buffer[i] = (byte) stream.ReadByte();
             return IPAddress.NetworkToHostOrder(BitConverter.ToInt32(buffer, 0));
-        }		
+        }*/		
 	}
 }

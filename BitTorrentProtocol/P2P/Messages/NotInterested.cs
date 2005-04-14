@@ -11,13 +11,15 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
     public class NotInterested : Message, IMessage {
 
         public NotInterested() {
-
+            this.type = 3;
         }
 
         #region IMessage Members
 
         byte[] IMessage.ToStream() {
-            throw new NotImplementedException();
+            base.ToStream();
+            message[4] = type;
+            return message;
         }
 
         #endregion
