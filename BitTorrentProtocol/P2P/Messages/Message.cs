@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using SharpTorrent.BitTorrentProtocol.Exceptions;
 using SharpTorrent.BitTorrentProtocol.Utilities;
 
 namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
@@ -32,11 +33,13 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
     }
 
     public abstract class Message {
-		protected byte type;
+        protected int messagePosition;
+        protected byte type;
 		protected byte [] message;
 
 		public Message() {
-		}
+            messagePosition = 0;
+        }
 
 		public new string ToString() {
             return Conversions.HexByteArrayToString(message);

@@ -88,4 +88,13 @@ namespace SharpTorrent.BitTorrentProtocol.Exceptions {
         public SocketListenerException(string message, Exception innerException) : base(message, innerException) {
         }
     }
+
+    public class MessageException : BitTorrentException {
+        public MessageException() : base() {
+        }
+        public MessageException(string message) : base(message) {
+        }
+        public MessageException(string message, Exception innerException) : base(message, innerException) {
+        }
+    }
 }
