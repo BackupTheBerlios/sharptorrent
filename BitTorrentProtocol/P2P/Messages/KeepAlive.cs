@@ -18,7 +18,7 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
         #region IMessage Members
 
         byte[] IMessage.ToStream() {
-            throw new NotImplementedException();
+            return message;
         }
 
         #endregion

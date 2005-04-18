@@ -14,13 +14,14 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
 	/// else every time a piece arrives.
 	/// </summary>
     public class Cancel : Message, IMessage {
+        private const int MESSAGELENGHT = BigEndian.BIGENDIANBYTELENGTH + 1 + (3 * BigEndian.BIGENDIANBYTELENGTH);
         private int index;
 		private int begin;
 		private int length;
 
 		public Cancel(int index, int begin, int length) {
-			
-			this.index = index;
+            this.type = 8;
+            this.index = index;
 			this.begin = begin;
     		this.length = length;
 		}
@@ -29,7 +30,17 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
         #region IMessage Members
 
         byte[] IMessage.ToStream() {
-            throw new NotImplementedException();
+            message = new byte[MESSAGELENGHT];
+            byte[] messageLength = BigEndian.ToBigEndian(1 + (3 * BigEndian.BIGENDIANBYTELENGTH));
+            AddMessage(message, messageLength);
+            AddMessage(message, type);
+            byte[] bIndex = BigEndian.ToBigEndian(index);
+            AddMessage(message, bIndex);
+            byte[] bBegin = BigEndian.ToBigEndian(begin);
+            AddMessage(message, bBegin);
+            byte[] bLength = BigEndian.ToBigEndian(length);
+            AddMessage(message, bLength);
+            return message;
         }
 
         #endregion

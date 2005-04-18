@@ -49,5 +49,19 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
             // The basic types are 5 bytes length
             return new byte[BigEndian.BIGENDIANBYTELENGTH + 1];
         }
+
+        protected void AddMessage(byte[] buffer, byte[] newMessage) {
+            // Check for space
+            if (buffer.Length < messagePosition + newMessage.Length)
+                throw new MessageException("Error adding a message to the buffer. (byte[])");
+            for (int i = 0; i < newMessage.Length; i++)
+                buffer[messagePosition++] = newMessage[i];
+        }
+
+        protected void AddMessage(byte[] buffer, byte value) {
+            if (messagePosition > buffer.Length)
+                throw new MessageException("Error adding a message to the buffer. (byte)");
+            buffer[messagePosition++] = value;
+        }
     }
 }

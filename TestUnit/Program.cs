@@ -8,6 +8,7 @@ using SharpTorrent.BitTorrentProtocol.BeEncode;
 using SharpTorrent.BitTorrentProtocol.Tracker;
 using SharpTorrent.BitTorrentProtocol.P2P;
 using SharpTorrent.BitTorrentProtocol.Utilities;
+using SharpTorrent.BitTorrentProtocol.P2P.Messages;
 #endregion
 
 namespace TestUnit {
@@ -56,10 +57,18 @@ namespace TestUnit {
             }
         }
 
+        public void TestMessage() {
+            //Have have = new Have(3);
+            //Console.WriteLine(Conversions.ConvertByteArrayToString(((IMessage)have).ToStream()));
+            //Request request = new Request(3, 2, 13);
+            //Console.WriteLine(Conversions.ConvertByteArrayToString(((IMessage)request).ToStream()));
+        }
+
         static void Main(string[] args) {
             Program test = new Program();
             //test.Test1();
-            test.TestTracker();
+            //test.TestTracker();
+            test.TestMessage();
             Console.ReadLine();
         }
 

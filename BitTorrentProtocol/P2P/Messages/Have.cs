@@ -21,24 +21,15 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
 			this.index = index;
 		}
 
-        private void AddMessage(byte[] buffer, byte[] newMessage) {
-            // Check for space
-            if (buffer.Length < messagePosition + newMessage.Length)
-                throw new MessageException("Error adding a message to the buffer.");
-            for (int i = 0; i < newMessage.Length; i++) {
-                buffer[messagePosition + i] = newMessage[i];
-                messagePosition++;
-            }
-        }
-
         #region IMessage Members
 
         byte[] IMessage.ToStream() {
             this.type = 4;
             this.message = new byte [MESSAGELENGHT];
             
-            byte[] messageLengt = BigEndian.ToBigEndian(MESSAGELENGHT);
+            byte[] messageLength = BigEndian.ToBigEndian(MESSAGELENGHT);
             AddMessage(message, messageLength);
+            AddMessage(message, type);
             byte[] messageContent = BigEndian.ToBigEndian(index);
             AddMessage(message, messageContent);
             return this.message;
