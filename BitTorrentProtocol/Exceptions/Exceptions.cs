@@ -97,4 +97,22 @@ namespace SharpTorrent.BitTorrentProtocol.Exceptions {
         public MessageException(string message, Exception innerException) : base(message, innerException) {
         }
     }
+
+    public class StreamOperationsException : BitTorrentException {
+        public StreamOperationsException() : base() {
+        }
+        public StreamOperationsException(string message) : base(message) {
+        }
+        public StreamOperationsException(string message, Exception innerException) : base(message, innerException) {
+        }
+    }
+
+    public class FileException : BitTorrentException {
+        public FileException() : base() {
+        }
+        public FileException(string message) : base(message) {
+        }
+        public FileException(string message, Exception innerException) : base(message, innerException) {
+        }
+    }
 }

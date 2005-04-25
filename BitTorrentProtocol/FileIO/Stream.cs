@@ -1,16 +1,16 @@
 ﻿#region Using directives
-
 using System;
-using System.Collections.Generic;
-using System.Text;
-
+using System.IO;
 #endregion
 
 namespace SharpTorrent.BitTorrentProtocol.FileIO {
-    public class Stream {
-        public Stream()
-        {
 
+    public abstract class Stream {
+        protected FileStream fs;
+        protected string fileName = String.Empty;
+
+        public Stream() {
         }
+
     }
 }

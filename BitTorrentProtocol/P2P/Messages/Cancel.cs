@@ -1,4 +1,5 @@
 using System;
+using SharpTorrent.BitTorrentProtocol.Utilities;
 
 namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
     /// <summary>

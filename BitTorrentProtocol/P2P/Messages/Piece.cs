@@ -21,6 +21,7 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
             this.piece = piece;
 		}
 
+     
         #region IMessage Members
 
         byte[] IMessage.ToStream() {
@@ -33,6 +34,23 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
             AddMessage(message, bBegin);
             AddMessage(message, piece);
             return message;
+        }
+
+        #endregion
+
+        #region Properties
+
+        public int PieceIndex {
+            get { return index; }
+        }
+
+        public int PieceOffset {
+            get { return begin; }
+
+        }
+
+        public byte[] PieceValues {
+            get { return piece; }
         }
 
         #endregion

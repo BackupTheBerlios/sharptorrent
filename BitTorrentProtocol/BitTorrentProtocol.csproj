@@ -96,9 +96,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="FileIO\FilePiece.cs" />
-    <Compile Include="FileIO\InputStream.cs" />
-    <Compile Include="FileIO\OutputStream.cs" />
     <Compile Include="FileIO\Stream.cs" />
+    <Compile Include="FileIO\StreamOperations.cs" />
     <Compile Include="Log\Log.cs" />
     <Compile Include="P2P\Connections.cs" />
     <Compile Include="P2P\Dispatcher.cs" />

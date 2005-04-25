@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using SharpTorrent.BitTorrentProtocol.Exceptions;
 using SharpTorrent.BitTorrentProtocol.Utilities;
 
 namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
@@ -15,37 +16,73 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
     /// 0 0 0 13 5 255 255 255 255 255 255 255 255 255 255 255 224
     /// </summary>
     public class Bitfield : Message, IMessage {
+        private const int MESSAGELENGTH = BigEndian.BIGENDIANBYTELENGTH + 1;
+        private const int BITS = 8;
         private int numPieces;
+        private int numBytes;
         private byte[] pieces;
 
+
+        #region Constructors
 
         public Bitfield(int numPieces) {
             this.numPieces = numPieces;
             // Create the byte array. 8 pieces = 1 Byte
-            int numBytes = (numPieces / sizeof(byte));
-            if ((numPieces % sizeof(byte)) != 0)
+            numBytes = (numPieces / BITS);
+            if ((numPieces % BITS) != 0)
                 numBytes++;
-            pieces = new byte[numPieces];
+            pieces = new byte[numBytes];
 
         }
 
-        public Bitfield(byte [] buffer) {
-
+        public Bitfield(int numPieces, byte [] buffer) {
+            this.numPieces = numPieces;
+            pieces = new byte[numPieces];
+            for (int i = 0; i < buffer.Length; i++)
+                pieces[i] = buffer[i];
         }
 
         public Bitfield(Bitfield bitfield) {
-
+            numPieces = bitfield.numPieces;
+            pieces = new byte[numPieces];
+            for (int i = 0; i < bitfield.pieces.Length; i++)
+                pieces[i] = bitfield.pieces[i];
         }
+
+        #endregion
 
         #region Public Methods
 
         public void AddPiece(int pieceIndex) {
-
+            int byteIndex = (pieceIndex / BITS);
+            byte offset = (byte) (pieceIndex % BITS);
+            byte maskByte;
+            if (offset == 0) {
+                byteIndex--;
+                maskByte = 128;
+            }
+            else
+                maskByte = (byte) (1 << (offset - 1));
+            if (byteIndex >= pieces.Length)
+                throw new MessageException("Error adding piece (" + pieceIndex.ToString() + ") to Bitfield.");
+            else
+                pieces[byteIndex] |= maskByte;
         }
 
         public bool HasPiece(int pieceIndex) {
-
-            return false;
+            int byteIndex = (pieceIndex / BITS);
+            byte offset = (byte)(pieceIndex % BITS);
+            byte maskByte;
+            if (offset == 0) {
+                byteIndex--;
+                maskByte = 128;
+            }
+            else
+                maskByte = (byte)(1 << (offset - 1));
+            if (byteIndex >= pieces.Length)
+                throw new MessageException("There is no piece (" + pieceIndex.ToString() + ").");
+            else
+                return ((pieces[byteIndex] &= maskByte) > 0);
         }
 
         #endregion
@@ -53,7 +90,12 @@ namespace SharpTorrent.BitTorrentProtocol.P2P.Messages {
         #region IMessage Members
 
         byte[] IMessage.ToStream() {
-            throw new NotImplementedException();
+            message = new byte[MESSAGELENGTH + pieces.Length];
+            AddMessage(message, BigEndian.ToBigEndian(message.Length));
+            AddMessage(message, type);
+            // Add pieces
+            AddMessage(message, pieces);
+            return message;
         }
 
         #endregion

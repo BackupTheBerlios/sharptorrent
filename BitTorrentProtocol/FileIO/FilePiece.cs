@@ -7,8 +7,11 @@ namespace SharpTorrent.BitTorrentProtocol.FileIO {
 	/// file, starting at zero.
 	/// </summary>
 	public class FilePiece {
+        private int index;
+        private int pieceLebgth;
+        private byte[] sha1;
 
-		public FilePiece(int index, int pieceLength, byte [] pieceSHA1) {
+        public FilePiece(int index, int pieceLength, byte [] pieceSHA1) {
 		}
 	}
 }
