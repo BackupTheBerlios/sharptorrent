@@ -12,9 +12,26 @@ namespace SharpTorrent.BitTorrentProtocol.FileIO {
         private byte[] sha1;
         private byte[] filePiece;
 
-        public FilePiece(int index, int pieceLength, byte [] pieceSHA1, byte [] filePiece) {
-		}
+        #region Constructors
 
-        
-	}
+        public FilePiece(int index, int pieceLength, byte[] filePiece) {
+            this.index = index;
+            this.pieceLength = pieceLength;
+            this.filePiece = filePiece;
+        }
+
+        public FilePiece(int index, int pieceLength, byte [] pieceSHA1, byte [] filePiece) : this(index, pieceLength, filePiece) {
+            this.sha1 = pieceSHA1;
+        }
+
+        #endregion
+
+        #region Public methods
+    
+        public byte[] Piece(int begin, int length) {
+            return null;
+        }
+
+        #endregion
+    }
 }
